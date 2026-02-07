@@ -21,8 +21,12 @@ A FiveM script for vehicle registry, ownership history, and mileage reporting.
 
 ## Configuration
 
-- Edit vehicles and owners in `server/vehicles.lua` or `vehicles.json`.
+- Edit vehicles and owners in `server/server.lua`.
 - Build the UI with `npm run build` in the `ui` folder.
+
+## NOTE
+
+This is only a test script so no connection to actual database.
 
 ## Support
 
