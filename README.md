@@ -40,16 +40,21 @@ Questions? Send a PM or create an issue on GitHub.
 
 ### Vehicle Search
 
-![Vehicle Search](./screenshots/search.png)
+![Vehicle Search](./screenshots/filter1.png)
+
+### Search Filter
+
+![Search Filter](./screenshots/filter2.png)
 
 ### Vehicle Information
 
-![Vehicle Information](./screenshots/result1.png)
+![Vehicle Information](./screenshots/backButton.png)
 
-### Mileage
+### Mileage & Ownership History
 
-![Mileage](./screenshots/result2.png)
+![Mileage & Ownership History](./screenshots/ownerHistory.png)
 
 ### Transfer Owner Modal
 
-![Transfer Owner Modal](./screenshots/result3.png)
+![Transfer Owner Modal](./screenshots/transferOwner1.png)
+![Transfer Owner Modal](./screenshots/transferOwner2.png)
