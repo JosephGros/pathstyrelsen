@@ -8,9 +8,10 @@ local vehicles = {
     mileage = 12450,
     mileageUpdatedAt = "2026-02-01",
     owners = {
-      { ownerId = "19990101-1234", firstname = "John", lastname = "Doe", from = "2024-01-10", to = "2025-06-30" },
-      { ownerId = "19950505-5678", firstname = "Alice", lastname = "Johnson", from = "2025-07-01", to = "2026-01-15" },
-      { ownerId = "19721212-1111", firstname = "Bob", lastname = "Brown", from = "2026-01-16", to = nil }
+      { ownerId = "19990101-1234", firstname = "John", lastname = "Doe", from = "2024-01-10", to = "2025-06-30", isCompany = false, lastMileage = 8500 },
+      { ownerId = "556677-8899", firstname = "Tech Solutions AB", lastname = "", from = "2025-07-01", to = "2025-12-31", isCompany = true, lastMileage = 10000 },
+      { ownerId = "19950505-5678", firstname = "Alice", lastname = "Johnson", from = "2025-07-01", to = "2026-01-15", isCompany = false, lastMileage = 11200 },
+      { ownerId = "19721212-1111", firstname = "Bob", lastname = "Brown", from = "2026-01-16", to = nil, isCompany = false }
     }
   },
   ABC456 = {
@@ -22,10 +23,10 @@ local vehicles = {
     mileage = 12450,
     mileageUpdatedAt = "2026-02-01",
     owners = {
-      { ownerId = "19990101-1234", firstname = "John", lastname = "Doe", from = "2023-01-10", to = "2024-05-20" },
-      { ownerId = "19800101-1234", firstname = "Jane", lastname = "Smith", from = "2024-05-21", to = "2025-11-30" },
-      { ownerId = "19950505-5678", firstname = "Alice", lastname = "Johnson", from = "2025-12-01", to = "2026-02-01" },
-      { ownerId = "19721212-1111", firstname = "Bob", lastname = "Brown", from = "2026-02-02", to = nil }
+      { ownerId = "19990101-1234", firstname = "John", lastname = "Doe", from = "2023-01-10", to = "2024-05-20", isCompany = false, lastMileage = 5000 },
+      { ownerId = "19800101-1234", firstname = "Jane", lastname = "Smith", from = "2024-05-21", to = "2025-11-30", isCompany = false, lastMileage = 9000 },
+      { ownerId = "19950505-5678", firstname = "Alice", lastname = "Johnson", from = "2025-12-01", to = "2026-02-01", isCompany = false, lastMileage = 11800 },
+      { ownerId = "19721212-1111", firstname = "Bob", lastname = "Brown", from = "2026-02-02", to = nil, isCompany = false }
     }
   },
   ABC789 = {
@@ -37,9 +38,9 @@ local vehicles = {
     mileage = 12450,
     mileageUpdatedAt = "2026-02-01",
     owners = {
-      { ownerId = "19990101-1234", firstname = "John", lastname = "Doe", from = "2024-01-10", to = "2025-06-30" },
-      { ownerId = "19950505-5678", firstname = "Alice", lastname = "Johnson", from = "2025-07-01", to = "2025-12-31" },
-      { ownerId = "19990101-1234", firstname = "John", lastname = "Doe", from = "2026-01-01", to = nil }
+      { ownerId = "19990101-1234", firstname = "John", lastname = "Doe", from = "2024-01-10", to = "2025-06-30", isCompany = false, lastMileage = 7000 },
+      { ownerId = "556677-8899", firstname = "Tech Solutions AB", lastname = "", from = "2025-07-01", to = "2025-12-31", isCompany = true, lastMileage = 10000 },
+      { ownerId = "19990101-1234", firstname = "John", lastname = "Doe", from = "2026-01-01", to = nil, isCompany = false }
     }
   },
   ABC111 = {
@@ -51,9 +52,9 @@ local vehicles = {
     mileage = 12450,
     mileageUpdatedAt = "2026-02-01",
     owners = {
-      { ownerId = "19990101-1234", firstname = "John", lastname = "Doe", from = "2024-01-10", to = "2025-06-30" },
-      { ownerId = "19950505-5678", firstname = "Alice", lastname = "Johnson", from = "2025-07-01", to = "2026-01-01" },
-      { ownerId = "19721212-1111", firstname = "Bob", lastname = "Brown", from = "2026-01-02", to = nil }
+      { ownerId = "19990101-1234", firstname = "John", lastname = "Doe", from = "2024-01-10", to = "2025-06-30", isCompany = false, lastMileage = 6500 },
+      { ownerId = "19950505-5678", firstname = "Alice", lastname = "Johnson", from = "2025-07-01", to = "2026-01-01", isCompany = false, lastMileage = 11000 },
+      { ownerId = "19721212-1111", firstname = "Bob", lastname = "Brown", from = "2026-01-02", to = nil, isCompany = false }
     }
   },
   XYZ999 = {
@@ -65,8 +66,8 @@ local vehicles = {
     mileage = 8300,
     mileageUpdatedAt = "2026-01-12",
     owners = {
-      { ownerId = "19721212-1111", firstname = "Bob", lastname = "Brown", from = "2023-03-01", to = "2024-08-15" },
-      { ownerId = "19990101-1234", firstname = "John", lastname = "Doe", from = "2024-08-16", to = nil }
+      { ownerId = "112233-4455", firstname = "Motor AB", lastname = "", from = "2023-03-01", to = "2024-08-15", isCompany = true, lastMileage = 5000 },
+      { ownerId = "19990101-1234", firstname = "John", lastname = "Doe", from = "2024-08-16", to = nil, isCompany = false }
     }
   }
 }
@@ -104,6 +105,7 @@ RegisterNetEvent("ts:transferOwner", function(data)
   local newOwnerId = data and data.newOwnerId
   local firstname = data and data.firstname
   local lastname = data and data.lastname
+  local isCompany = data and data.isCompany or false
 
   if not vehicleId then
     TriggerClientEvent("ts:error", src, { error = "Fordon saknar ID.", requestId = data and data.requestId })
@@ -116,7 +118,7 @@ RegisterNetEvent("ts:transferOwner", function(data)
     return
   end
 
-  local out = VehicleService.transferOwner(v, newOwnerId, today(), firstname, lastname)
+  local out = VehicleService.transferOwner(v, newOwnerId, today(), firstname, lastname, isCompany)
 
   if not out.ok then
     TriggerClientEvent("ts:error", src, { error = out.error, requestId = data and data.requestId })

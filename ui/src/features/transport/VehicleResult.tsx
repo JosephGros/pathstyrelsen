@@ -11,6 +11,7 @@ type VehicleResultProps = {
     newOwnerId: string,
     firstname: string,
     lastname: string,
+    isCompany?: boolean,
   ) => Promise<any> | void;
   onReportMileage: (
     vehicleId: string,
@@ -25,11 +26,13 @@ export default function VehicleResult({
 }: VehicleResultProps) {
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
-  const currentOwnerId = useMemo(() => {
+  const currentOwnerInfo = useMemo(() => {
     const current = vehicle.owners.find((owner) => owner.to == null);
-    if (!current) return 'N/A';
-    const name = `${current.firstname || ''} ${current.lastname || ''}`.trim();
-    return name || 'N/A';
+    if (!current) return { name: 'N/A', isCompany: false };
+    const name = current.isCompany
+      ? current.firstname
+      : `${current.firstname || ''} ${current.lastname || ''}`.trim();
+    return { name: name || 'N/A', isCompany: current.isCompany };
   }, [vehicle.owners]);
 
   const statusBadgeClass =
@@ -50,10 +53,10 @@ export default function VehicleResult({
         </div>
         <div className="flex items-start justify-between gap-2">
           <div>
-            <div className="text-lg font-black tracking-tight text-gov-text">
+            <div className="text-lg tracking-tight text-gov-text">
               {vehicle.reg}
             </div>
-            <div className="text-xs text-gov-text2">
+            <div className="text-sm text-gov-text2">
               {vehicle.type} • {vehicle.model}
             </div>
           </div>
@@ -62,19 +65,17 @@ export default function VehicleResult({
 
         <div className="mt-3 grid grid-cols-2 gap-2">
           <div className="p-2 rounded-xl border border-gov-border bg-gov-surface">
-            <div className="text-[10px] text-gov-text2 font-bold">
-              Fordons-ID
-            </div>
-            <div className="text-[12px] font-extrabold font-mono text-gov-text">
-              {vehicle.id}
-            </div>
+            <div className="text-sm text-gov-text2">Fordons-ID</div>
+            <div className="text-sm font-mono text-gov-text">{vehicle.id}</div>
           </div>
           <div className="p-2 rounded-xl border border-gov-border bg-gov-surface">
-            <div className="text-[10px] text-gov-text2 font-bold">
-              Nuvarande ägare
-            </div>
-            <div className="text-[12px] font-extrabold font-mono text-gov-text">
-              {currentOwnerId}
+            <div className="text-sm text-gov-text2">Nuvarande ägare</div>
+            <div className="text-sm font-mono text-gov-text flex items-center gap-1">
+              <span>{currentOwnerInfo.name}</span>
+              <i
+                className={`fa-solid ${currentOwnerInfo.isCompany ? 'fa-building' : 'fa-user'} text-xs text-gov-text2`}
+                title={currentOwnerInfo.isCompany ? 'Företag' : 'Privatperson'}
+              ></i>
             </div>
           </div>
         </div>
@@ -82,11 +83,26 @@ export default function VehicleResult({
         <div className="mt-3 flex justify-end">
           <button
             onClick={() => setIsTransferModalOpen(true)}
-            className="h-10 px-4 rounded-xl font-extrabold bg-gov-card text-gov-text border border-gov-border hover:bg-[#263244] transition"
+            className="h-10 px-4 rounded-xl bg-gov-card text-gov-text text-sm border border-gov-border hover:bg-[#263244] transition"
           >
             Initiera ägarbyte
           </button>
         </div>
+        <TransferOwnerModal
+          isOpen={isTransferModalOpen}
+          onClose={() => setIsTransferModalOpen(false)}
+          registrationNumber={vehicle.reg}
+          onConfirm={async (newOwnerId, firstname, lastname, isCompany) => {
+            await onTransferOwner(
+              vehicle.id,
+              newOwnerId,
+              firstname,
+              lastname,
+              isCompany,
+            );
+            setIsTransferModalOpen(false);
+          }}
+        />
       </div>
 
       <MileageCard
@@ -99,16 +115,6 @@ export default function VehicleResult({
           .map((owner) => owner.ownerId + (owner.to || ''))
           .join('-')}
         owners={vehicle.owners}
-      />
-
-      <TransferOwnerModal
-        isOpen={isTransferModalOpen}
-        onClose={() => setIsTransferModalOpen(false)}
-        registrationNumber={vehicle.reg}
-        onConfirm={async (newOwnerId, firstname, lastname) => {
-          await onTransferOwner(vehicle.id, newOwnerId, firstname, lastname);
-          setIsTransferModalOpen(false);
-        }}
       />
     </>
   );

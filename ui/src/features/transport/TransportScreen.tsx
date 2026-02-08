@@ -6,6 +6,7 @@ import ErrorBanner from './ErrorBanner';
 import EmptyState from './EmptyState';
 import PhoneFrame from './PhoneFrame';
 import SearchResultList from './SearchResultList';
+import FilterCard from './FilterCard';
 
 export default function TransportScreen() {
   const {
@@ -17,9 +18,16 @@ export default function TransportScreen() {
     searchVehicles,
     selectedVehicle,
     vehicleList,
+    vehicleListState,
     selectVehicle,
     transferVehicleOwner,
     reportVehicleMileage,
+    vehicleTypeFilter,
+    setVehicleTypeFilter,
+    vehicleModelFilter,
+    setVehicleModelFilter,
+    backToList,
+    showBackButton,
   } = useTransportStore();
 
   if (!isVisible) return null;
@@ -65,22 +73,41 @@ export default function TransportScreen() {
         )}
 
         {uiState.status === 'list' && (
-          <SearchResultList vehicles={vehicleList} onSelect={selectVehicle} />
+          <>
+            <FilterCard
+              vehicleType={vehicleTypeFilter}
+              setVehicleType={setVehicleTypeFilter}
+              vehicleModel={vehicleModelFilter}
+              setVehicleModel={setVehicleModelFilter}
+            />
+            <SearchResultList vehicles={vehicleList} onSelect={selectVehicle} />
+          </>
         )}
 
-        {selectedVehicle && uiState.status === 'success' && (
-          <VehicleResult
-            key={
-              selectedVehicle.id +
-              '-' +
-              selectedVehicle.mileage +
-              '-' +
-              (selectedVehicle.owners?.length || 0)
-            }
-            vehicle={selectedVehicle}
-            onTransferOwner={transferVehicleOwner}
-            onReportMileage={reportVehicleMileage}
-          />
+        {uiState.status === 'success' && selectedVehicle && (
+          <>
+            {showBackButton && (
+              <button
+                onClick={backToList}
+                className="w-full h-10 px-4 rounded-xl bg-gov-card text-gov-text text-sm border border-gov-border hover:bg-[#263244] transition flex items-center gap-2"
+              >
+                <i className="fa-solid fa-chevron-left text-xs"></i>
+                <span>Tillbaka</span>
+              </button>
+            )}
+            <VehicleResult
+              key={
+                selectedVehicle.id +
+                '-' +
+                selectedVehicle.mileage +
+                '-' +
+                (selectedVehicle.owners?.length || 0)
+              }
+              vehicle={selectedVehicle}
+              onTransferOwner={transferVehicleOwner}
+              onReportMileage={reportVehicleMileage}
+            />
+          </>
         )}
       </div>
     </PhoneFrame>

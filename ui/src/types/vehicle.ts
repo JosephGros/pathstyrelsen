@@ -6,6 +6,8 @@ export type OwnerEntry = {
   lastname: string;
   from: string; // YYYY-MM-DD
   to: string | null;
+  isCompany?: boolean;
+  lastMileage?: number;
 };
 
 export type Vehicle = {

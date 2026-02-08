@@ -16,6 +16,9 @@ export function useTransportStore() {
   const [uiState, setUiState] = useState<TransportUiState>({ status: 'idle' });
   const [searchQuery, setSearchQuery] = useState('');
   const [vehicleListState, setVehicleListState] = useState<Vehicle[]>([]);
+  const [vehicleTypeFilter, setVehicleTypeFilter] = useState('');
+  const [vehicleModelFilter, setVehicleModelFilter] = useState('');
+  const [showBackButton, setShowBackButton] = useState(false);
 
   useEffect(() => {
     function handleNuiMessage(event: MessageEvent) {
@@ -33,7 +36,26 @@ export function useTransportStore() {
                 Array.isArray((message as any).data.vehicles)
               ? (message as any).data.vehicles
               : [];
-        setVehicleListState(vehicles);
+
+        setVehicleListState((prevList) => {
+          if (vehicles.length === 1 && prevList.length > 1) {
+            const updated = prevList.map((v) =>
+              v.id === vehicles[0].id ? vehicles[0] : v,
+            );
+            return updated.some((v) => v.id === vehicles[0].id)
+              ? updated
+              : prevList;
+          }
+          return vehicles;
+        });
+
+        setShowBackButton((prev) => {
+          if (vehicles.length === 1 && prev === true) {
+            return true;
+          }
+          return vehicles.length > 1;
+        });
+
         if (vehicles.length === 0) setUiState({ status: 'empty' });
         else if (vehicles.length === 1)
           setUiState({ status: 'success', vehicle: vehicles[0] });
@@ -50,10 +72,19 @@ export function useTransportStore() {
     () => (hasSelectedVehicle ? uiState.vehicle : null),
     [hasSelectedVehicle, uiState],
   );
-  const vehicleList = useMemo(
-    () => (uiState.status === 'list' ? uiState.vehicles : vehicleListState),
-    [uiState, vehicleListState],
-  );
+  const vehicleList = useMemo(() => {
+    const vehicles =
+      uiState.status === 'list' ? uiState.vehicles : vehicleListState;
+    return vehicles.filter((vehicle) => {
+      const typeMatch =
+        !vehicleTypeFilter ||
+        vehicle.type.toLowerCase() === vehicleTypeFilter.toLowerCase();
+      const modelMatch =
+        !vehicleModelFilter ||
+        vehicle.model.toLowerCase().includes(vehicleModelFilter.toLowerCase());
+      return typeMatch && modelMatch;
+    });
+  }, [uiState, vehicleListState, vehicleTypeFilter, vehicleModelFilter]);
 
   const selectVehicle = useCallback((vehicle: Vehicle) => {
     setUiState({ status: 'success', vehicle });
@@ -69,6 +100,7 @@ export function useTransportStore() {
     const result = await fetchNui('ts_search', { query: searchQuery });
     const vehicles = result?.vehicles || [];
     setVehicleListState(vehicles);
+    setShowBackButton(vehicles.length > 1);
     if (vehicles.length === 0) setUiState({ status: 'empty' });
     else if (vehicles.length === 1)
       setUiState({ status: 'success', vehicle: vehicles[0] });
@@ -81,12 +113,14 @@ export function useTransportStore() {
       newOwnerId: string,
       firstname?: string,
       lastname?: string,
+      isCompany?: boolean,
     ) => {
       const response = await fetchNui('ts_transferOwner', {
         vehicleId,
         newOwnerId,
         firstname,
         lastname,
+        isCompany,
       });
       if (response && response.vehicles && response.vehicles[0]) {
         setVehicleListState((prevList) =>
@@ -139,6 +173,16 @@ export function useTransportStore() {
     [],
   );
 
+  const backToList = useCallback(() => {
+    if (vehicleListState.length > 1) {
+      setUiState({ status: 'list', vehicles: vehicleListState });
+    } else if (vehicleListState.length === 1) {
+      setUiState({ status: 'success', vehicle: vehicleListState[0] });
+    } else {
+      setUiState({ status: 'empty' });
+    }
+  }, [vehicleListState]);
+
   return {
     isVisible,
     uiState,
@@ -146,11 +190,18 @@ export function useTransportStore() {
     setSearchQuery,
     selectedVehicle,
     vehicleList,
+    vehicleListState,
     selectVehicle,
     closeTransportUi,
     searchVehicles,
     transferVehicleOwner,
     reportVehicleMileage,
     setUiState,
+    vehicleTypeFilter,
+    setVehicleTypeFilter,
+    vehicleModelFilter,
+    setVehicleModelFilter,
+    backToList,
+    showBackButton,
   };
 }

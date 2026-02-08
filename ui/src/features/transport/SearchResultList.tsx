@@ -19,12 +19,12 @@ export default function SearchResultList({
           onClick={() => onSelect(vehicle)}
         >
           <span>
-            <span className="font-bold text-gov-text">{vehicle.reg}</span>
-            <span className="ml-2 text-xs text-gov-text2">
+            <span className="text-gov-text text-sm">{vehicle.reg}</span>
+            <span className="ml-2 text-sm text-gov-text2">
               {vehicle.type} • {vehicle.model}
             </span>
           </span>
-          <span className="text-xs font-mono text-gov-muted">{vehicle.id}</span>
+          <span className="text-sm font-mono text-gov-muted">{vehicle.id}</span>
         </button>
       ))}
     </div>

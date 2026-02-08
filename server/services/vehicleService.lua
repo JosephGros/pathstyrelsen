@@ -41,7 +41,7 @@ function VehicleService.searchVehicle(vehiclesQuery, query)
     return results
 end
 
-function VehicleService.transferOwner(vehicle, newOwnerId, today, firstname, lastname)
+function VehicleService.transferOwner(vehicle, newOwnerId, today, firstname, lastname, isCompany)
     if not vehicle then return { ok = false, error = "Fordon hittades inte." } end
 
     local owners = vehicle.owners or {}
@@ -52,13 +52,17 @@ function VehicleService.transferOwner(vehicle, newOwnerId, today, firstname, las
     if not current then return { ok = false, error = "Nuvarande ägare hittades inte." } end
     if current.ownerId == newOwnerId then return { ok = false, error = "Du äger redan detta fordon." } end
 
+    -- Set lastMileage for previous owner
     current["to"] = today
+    current["lastMileage"] = vehicle.mileage
+
     table.insert(owners, {
         ownerId = newOwnerId,
         firstname = firstname,
         lastname = lastname,
         ["from"] = today,
-        ["to"] = nil
+        ["to"] = nil,
+        isCompany = isCompany or false
     })
     vehicle.owners = owners
     return { ok = true, vehicle = vehicle }
