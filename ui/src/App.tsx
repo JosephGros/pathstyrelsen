@@ -1,5 +1,4 @@
-
-import TransportScreen from "./features/transport/TransportScreen";
+import TransportScreen from './features/transport/TransportScreen';
 
 export default function App() {
   return (

@@ -1,27 +1,36 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 type TransferOwnerModalProps = {
   isOpen: boolean;
   onClose: () => void;
   registrationNumber: string;
-  onConfirm: (newOwnerId: string, firstname: string, lastname: string) => void | Promise<void>;
+  onConfirm: (
+    newOwnerId: string,
+    firstname: string,
+    lastname: string,
+  ) => void | Promise<void>;
 };
 
-export default function TransferOwnerModal({ isOpen, onClose, registrationNumber, onConfirm }: TransferOwnerModalProps) {
-  const [newOwnerIdInput, setNewOwnerIdInput] = useState("");
-  const [firstnameInput, setFirstnameInput] = useState("");
-  const [lastnameInput, setLastnameInput] = useState("");
+export default function TransferOwnerModal({
+  isOpen,
+  onClose,
+  registrationNumber,
+  onConfirm,
+}: TransferOwnerModalProps) {
+  const [newOwnerIdInput, setNewOwnerIdInput] = useState('');
+  const [firstnameInput, setFirstnameInput] = useState('');
+  const [lastnameInput, setLastnameInput] = useState('');
   useEffect(() => {
-    setNewOwnerIdInput("");
-    setFirstnameInput("");
-    setLastnameInput("");
+    setNewOwnerIdInput('');
+    setFirstnameInput('');
+    setLastnameInput('');
   }, [isOpen, registrationNumber]);
 
   if (!isOpen) return null;
 
   return (
     <div
-      className="absolute inset-0 bg-black/55 flex items-center justify-center"
+      className="w-[390px] h-[660px] rounded-phone absolute inset-0 bg-black/55 flex items-center justify-center"
       onMouseDown={onClose}
     >
       <div
@@ -30,11 +39,15 @@ export default function TransferOwnerModal({ isOpen, onClose, registrationNumber
       >
         <div className="px-4 py-3 border-b border-gov-border">
           <div className="font-black text-gov-text">Bekräfta ägarbyte</div>
-          <div className="text-[11px] text-gov-muted">Fordon: <span className="font-mono">{registrationNumber}</span></div>
+          <div className="text-[11px] text-gov-muted">
+            Fordon: <span className="font-mono">{registrationNumber}</span>
+          </div>
         </div>
 
         <div className="p-4 space-y-2">
-          <div className="text-xs font-extrabold text-gov-text2">Ny ägare (ID/personnummer)</div>
+          <div className="text-xs font-extrabold text-gov-text2">
+            Ny ägare (ID/personnummer)
+          </div>
           <input
             value={newOwnerIdInput}
             onChange={(e) => setNewOwnerIdInput(e.target.value)}
@@ -68,8 +81,18 @@ export default function TransferOwnerModal({ isOpen, onClose, registrationNumber
             Avbryt
           </button>
           <button
-            disabled={!newOwnerIdInput.trim() || !firstnameInput.trim() || !lastnameInput.trim()}
-            onClick={() => onConfirm(newOwnerIdInput.trim(), firstnameInput.trim(), lastnameInput.trim())}
+            disabled={
+              !newOwnerIdInput.trim() ||
+              !firstnameInput.trim() ||
+              !lastnameInput.trim()
+            }
+            onClick={() =>
+              onConfirm(
+                newOwnerIdInput.trim(),
+                firstnameInput.trim(),
+                lastnameInput.trim(),
+              )
+            }
             className="h-10 px-4 rounded-xl font-extrabold bg-gov-accent text-white hover:bg-gov-accentHover transition"
           >
             Bekräfta

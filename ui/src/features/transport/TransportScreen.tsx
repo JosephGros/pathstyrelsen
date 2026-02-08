@@ -1,12 +1,11 @@
-
-import { useTransportStore } from "../../state/useTransportStore";
-import SearchCard from "./SearchCard";
-import VehicleResult from "./VehicleResult";
-import LoadingState from "./LoadingState";
-import ErrorBanner from "./ErrorBanner";
-import EmptyState from "./EmptyState";
-import PhoneFrame from "./PhoneFrame";
-import SearchResultList from "./SearchResultList";
+import { useTransportStore } from '../../state/useTransportStore';
+import SearchCard from './SearchCard';
+import VehicleResult from './VehicleResult';
+import LoadingState from './LoadingState';
+import ErrorBanner from './ErrorBanner';
+import EmptyState from './EmptyState';
+import PhoneFrame from './PhoneFrame';
+import SearchResultList from './SearchResultList';
 
 export default function TransportScreen() {
   const {
@@ -29,7 +28,11 @@ export default function TransportScreen() {
     <PhoneFrame>
       <div className="h-16 px-4 flex items-center justify-between border-b border-gov-border bg-gov-surface">
         <div className="flex gap-2">
-          <img src="./pathstyrelsen_logo_phone.png" alt="Pathstyrelsen ./" className="h-14 w-22" />
+          <img
+            src="./pathstyrelsen_logo_phone.png"
+            alt="Pathstyrelsen ./"
+            className="h-14 w-22"
+          />
         </div>
         <button
           onClick={closeTransportUi}
@@ -41,26 +44,39 @@ export default function TransportScreen() {
       </div>
 
       <div className="p-3 flex-1 overflow-y-auto space-y-3 scrollbar scrollbar-thumb-myndighet-accent scrollbar-track-myndighet-surface">
-        <SearchCard 
-          searchValue={searchQuery} 
-          setSearchValue={setSearchQuery} 
-          onSearch={searchVehicles} 
-          isLoading={uiState.status === "loading"} 
+        <SearchCard
+          searchValue={searchQuery}
+          setSearchValue={setSearchQuery}
+          onSearch={searchVehicles}
+          isLoading={uiState.status === 'loading'}
         />
 
-        {uiState.status === "error" && <ErrorBanner message={uiState.message} />}
-        {uiState.status === "loading" && <LoadingState label="Söker fordon..." />}
-        {uiState.status === "empty" && (
-          <EmptyState title="Inget fordon hittades" body="Kontrollera registreringsnummer eller fordons-ID." />
+        {uiState.status === 'error' && (
+          <ErrorBanner message={uiState.message} />
+        )}
+        {uiState.status === 'loading' && (
+          <LoadingState label="Söker fordon..." />
+        )}
+        {uiState.status === 'empty' && (
+          <EmptyState
+            title="Inget fordon hittades"
+            body="Kontrollera registreringsnummer eller fordons-ID."
+          />
         )}
 
-        {uiState.status === "list" && (
+        {uiState.status === 'list' && (
           <SearchResultList vehicles={vehicleList} onSelect={selectVehicle} />
         )}
 
-        {selectedVehicle && uiState.status === "success" && (
+        {selectedVehicle && uiState.status === 'success' && (
           <VehicleResult
-            key={selectedVehicle.id + '-' + selectedVehicle.mileage + '-' + (selectedVehicle.owners?.length || 0)}
+            key={
+              selectedVehicle.id +
+              '-' +
+              selectedVehicle.mileage +
+              '-' +
+              (selectedVehicle.owners?.length || 0)
+            }
             vehicle={selectedVehicle}
             onTransferOwner={transferVehicleOwner}
             onReportMileage={reportVehicleMileage}

@@ -1,10 +1,10 @@
-export type VehicleStatus = "aktiv" | "avstalld";
+export type VehicleStatus = 'aktiv' | 'avstalld';
 
 export type OwnerEntry = {
   ownerId: string;
   firstname: string;
   lastname: string;
-  from: string;     // YYYY-MM-DD
+  from: string; // YYYY-MM-DD
   to: string | null;
 };
 
