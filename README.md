@@ -31,3 +31,25 @@ This is only a test script so no connection to actual database.
 ## Support
 
 Questions? Send a PM or create an issue on GitHub.
+
+## Screenshots
+
+### Home
+
+![Home](./screenshots/home.png)
+
+### Vehicle Search
+
+![Vehicle Search](./screenshots/search.png)
+
+### Vehicle Information
+
+![Vehicle Information](./screenshots/result1.png)
+
+### Mileage
+
+![Mileage](./screenshots/result2.png)
+
+### Transfer Owner Modal
+
+![Transfer Owner Modal](./screenshots/result3.png)
